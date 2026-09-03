@@ -43,11 +43,11 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         <Card className="p-5 lg:col-span-3">
           <h2 className="mb-4 text-sm font-semibold text-slate-800 dark:text-slate-100">Tasks by status</h2>
-          <div className="flex h-48 items-end gap-4">
+          <div className="flex items-end gap-4">
             {counts.map((c) => (
               <div key={c.s} className="flex flex-1 flex-col items-center gap-2">
                 <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{c.n}</span>
-                <div className="flex w-full flex-1 items-end">
+                <div className="flex h-32 w-full items-end">
                   <div
                     className={cn("w-full rounded-t-lg transition-all duration-700", barColor[c.s])}
                     style={{ height: `${(c.n / max) * 100}%`, minHeight: c.n ? 8 : 2 }}
