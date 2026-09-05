@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { seedData } from "./seed";
-import { Activity, AppData, Member, Preferences, Project, Task, TaskStatus, User, STATUS_LABELS } from "./types";
+import { Activity, AppData, Member, Preferences, Project, Task, TaskStatus, User, STATUS_LABELS, AVATAR_COLORS } from "./types";
 import { uid } from "./utils";
 
 const DATA_KEY = "projectops:data";
@@ -25,6 +25,7 @@ interface StoreContextValue {
   dismissToast: (id: string) => void;
   login: (username: string, password: string) => boolean;
   logout: () => void;
+  register: (input: { name: string; email: string; username: string; password: string }) => string | null;
   canEditTask: (task: Task) => boolean;
   canViewProject: (project: Project) => boolean;
   visibleProjects: Project[];
@@ -108,6 +109,33 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(SESSION_KEY, u.id);
     setSessionUserId(u.id);
     return true;
+  };
+
+  const register: StoreContextValue["register"] = ({ name, email, username, password }) => {
+    const uname = username.trim().toLowerCase();
+    const mail = email.trim().toLowerCase();
+    if (!/^[a-z0-9_.-]{3,20}$/.test(uname)) return "Username must be 3-20 characters (letters, numbers, . _ -)";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) return "Please enter a valid email address";
+    if (password.length < 6) return "Password must be at least 6 characters";
+    if (data.users.some((u) => u.username.toLowerCase() === uname)) return "That username is already taken";
+    if (data.users.some((u) => u.email.toLowerCase() === mail)) return "An account with that email already exists";
+    const user: User = {
+      id: uid(),
+      username: uname,
+      password,
+      name: name.trim(),
+      email: mail,
+      role: "user",
+      avatarColor: AVATAR_COLORS[data.users.length % AVATAR_COLORS.length],
+    };
+    setData((d) => ({
+      ...d,
+      users: [...d.users, user],
+      activity: [{ id: uid(), text: "created an account", timestamp: new Date().toISOString(), userId: user.id }, ...d.activity],
+    }));
+    localStorage.setItem(SESSION_KEY, user.id);
+    setSessionUserId(user.id);
+    return null;
   };
 
   const logout = () => {
@@ -312,6 +340,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     dismissToast,
     login,
     logout,
+    register,
     canEditTask,
     canViewProject,
     visibleProjects,

@@ -11,7 +11,8 @@ A professional team project management web app — projects, project-scoped and 
 
 ## Features
 
-- Glassmorphism login page with fade-in animation and role-based access (admin and regular user roles)
+- Centered split-card login page with role-based access (admin and regular user roles)
+- Self-service account creation (`/register`) with username/email uniqueness and password validation; new accounts get the `user` role
 - Change Password page: users change their own password; admins can also reset other users' passwords (validated, persisted to localStorage)
 - Dashboard with stat cards, recent activity feed and tasks-by-status chart
 - Projects grid with progress, task counts, team avatars and status badges
@@ -24,6 +25,8 @@ A professional team project management web app — projects, project-scoped and 
 - Toast notifications, empty states, loading states, responsive layout
 
 ## Demo accounts
+
+Or create your own account via **Create account** on the login page.
 
 - `admin` / `admin123` (role: admin)
 - `user` / `user123` (role: user)
