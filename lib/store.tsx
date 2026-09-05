@@ -56,8 +56,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(DATA_KEY);
-      if (raw) setData({ ...seedData, ...(JSON.parse(raw) as AppData) });
-      else localStorage.setItem(DATA_KEY, JSON.stringify(seedData));
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<AppData>;
+        setData({ ...seedData, ...parsed, preferences: { ...seedData.preferences, ...(parsed.preferences ?? {}) } });
+      } else localStorage.setItem(DATA_KEY, JSON.stringify(seedData));
       setSessionUserId(localStorage.getItem(SESSION_KEY));
     } catch {
       /* ignore */

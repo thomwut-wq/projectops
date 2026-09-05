@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Layers, Lock, User, AlertCircle, ArrowRight } from "lucide-react";
+import { Briefcase, Lock, User, AlertCircle } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { LoadingScreen, Spinner } from "@/components/ui";
 
@@ -34,32 +34,61 @@ export default function LoginPage() {
   };
 
   const inputCls =
-    "w-full rounded-xl border border-slate-200/80 bg-white/70 py-3 pl-11 pr-3 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/15 dark:border-slate-700 dark:bg-slate-800/70 dark:text-white dark:focus:bg-slate-800";
+    "w-full rounded-xl border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-[15px] text-slate-900 placeholder-slate-400 transition-all duration-200 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/15";
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 p-4">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(79,70,229,0.4),_transparent_40%),radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.3),_transparent_40%),radial-gradient(circle_at_center,_rgba(15,23,42,1),_rgba(2,6,23,1))]" />
-      <div className="pointer-events-none absolute left-[8%] top-[12%] h-56 w-56 rounded-full border border-indigo-400/10 animate-float" />
-      <div className="pointer-events-none absolute bottom-[6%] right-[6%] h-80 w-80 rounded-full border border-violet-400/10 animate-float-slow" />
-      <div className="pointer-events-none absolute -left-24 top-1/3 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-1/4 h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
+    <div className="min-h-screen bg-white animate-page-in lg:grid lg:grid-cols-[55%_45%]">
+      <aside className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 px-10 py-12 text-white sm:px-16 lg:min-h-screen lg:px-20 lg:py-16">
+        <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-float-slow" />
+        <div className="pointer-events-none absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-violet-400/20 blur-3xl animate-float" />
 
-      <div className="relative w-full max-w-md animate-login-in">
-        <div className="rounded-3xl border border-white/20 bg-white/85 p-8 shadow-2xl shadow-indigo-950/40 backdrop-blur-2xl dark:border-white/10 dark:bg-slate-900/70 sm:p-10">
-          <div className="flex flex-col items-center text-center">
-            <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/40 transition-transform duration-300 hover:scale-105 hover:rotate-3">
-              <Layers className="h-7 w-7" />
-            </span>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">Welcome back</p>
-            <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Sign in to ProjectOps</h1>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Enter your credentials to continue to your workspace.</p>
+        <div className="relative flex items-center gap-4">
+          <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md transition-transform duration-300 hover:scale-105 hover:rotate-3">
+            <Briefcase className="h-8 w-8" />
+          </span>
+          <span className="text-2xl font-extrabold tracking-tight">ProjectOps</span>
+        </div>
+
+        <div className="relative my-16 max-w-xl lg:my-0">
+          <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-semibold backdrop-blur-md">Built for focused teams</span>
+          <h2 className="mt-8 text-4xl font-extrabold leading-[1.15] tracking-tight sm:text-5xl">
+            Turn ambitious ideas into work that ships.
+          </h2>
+          <p className="mt-8 text-lg leading-relaxed text-indigo-100">
+            Plan projects, move work forward, and keep your entire team aligned from one calm workspace.
+          </p>
+        </div>
+
+        <div className="relative flex items-center gap-6">
+          <div className="flex -space-x-3">
+            {["AM", "JL", "TK"].map((i) => (
+              <span
+                key={i}
+                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-600 bg-white text-xs font-bold text-indigo-700"
+              >
+                {i}
+              </span>
+            ))}
           </div>
+          <p className="text-base text-indigo-50">Trusted by high-performing teams</p>
+        </div>
+      </aside>
 
-          <form onSubmit={submit} className="mt-8 space-y-4">
+      <main className="flex items-center justify-center px-6 py-14 sm:px-12 lg:px-16">
+        <div className="w-full max-w-[560px]">
+          <p className="text-base font-bold uppercase tracking-wide text-indigo-600">Welcome back</p>
+          <h1 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-slate-900">
+            Sign in to your
+            <br />
+            workspace
+          </h1>
+          <p className="mt-5 text-lg text-slate-500">Enter your credentials to continue to ProjectOps.</p>
+
+          <form onSubmit={submit} className="mt-10 space-y-6">
             <label className="block">
-              <span className="mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-300">Username</span>
+              <span className="mb-2.5 block text-base font-semibold text-slate-800">Username</span>
               <div className="relative">
-                <User className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400" />
+                <User className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                 <input
                   className={inputCls}
                   placeholder="Enter username"
@@ -71,9 +100,9 @@ export default function LoginPage() {
               </div>
             </label>
             <label className="block">
-              <span className="mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-300">Password</span>
+              <span className="mb-2.5 block text-base font-semibold text-slate-800">Password</span>
               <div className="relative">
-                <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400" />
+                <Lock className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
                 <input
                   type="password"
                   className={inputCls}
@@ -86,33 +115,20 @@ export default function LoginPage() {
               </div>
             </label>
             {error && (
-              <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 animate-fade-in dark:border-red-900 dark:bg-red-950/40 dark:text-red-400">
+              <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700 animate-fade-in">
                 <AlertCircle className="h-4 w-4" /> {error}
               </div>
             )}
             <button
               type="submit"
               disabled={loading}
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-indigo-600/40 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0"
+              className="flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-4 text-lg font-bold text-white shadow-lg shadow-indigo-600/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-600/30 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0"
             >
-              {loading ? (
-                <Spinner className="h-4 w-4 text-white" />
-              ) : (
-                <>
-                  Sign in
-                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                </>
-              )}
+              {loading ? <Spinner className="h-5 w-5 text-white" /> : "Sign in"}
             </button>
           </form>
-
-          <div className="mt-6 rounded-xl border border-slate-200/70 bg-slate-50/80 p-4 text-xs text-slate-500 dark:border-slate-700/60 dark:bg-slate-800/50 dark:text-slate-400">
-            Demo access: <span className="font-bold text-slate-700 dark:text-slate-200">admin / admin123</span> or{" "}
-            <span className="font-bold text-slate-700 dark:text-slate-200">user / user123</span>
-          </div>
         </div>
-        <p className="mt-6 text-center text-xs text-slate-400">© {new Date().getFullYear()} ProjectOps. Built for focused teams.</p>
-      </div>
+      </main>
     </div>
   );
 }

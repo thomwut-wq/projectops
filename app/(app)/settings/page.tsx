@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { AVATAR_COLORS } from "@/lib/types";
@@ -32,16 +32,19 @@ export default function SettingsPage() {
   const [name, setName] = useState(currentUser?.name ?? "");
   const [email, setEmail] = useState(currentUser?.email ?? "");
   const [color, setColor] = useState(currentUser?.avatarColor ?? AVATAR_COLORS[0]);
-  const [prefs, setPrefs] = useState(data.preferences);
-
-  useEffect(() => setPrefs(data.preferences), [data.preferences]);
+  const prefs = data.preferences;
 
   if (!currentUser) return null;
+
+  const setPref = (patch: Partial<typeof prefs>) => {
+    updatePreferences(patch);
+    if (patch.darkMode !== undefined) toast(patch.darkMode ? "Dark mode enabled" : "Dark mode disabled", "info");
+    if (patch.emailNotifications !== undefined) toast(patch.emailNotifications ? "Email notifications on" : "Email notifications off", "info");
+  };
 
   const save = (e: React.FormEvent) => {
     e.preventDefault();
     updateProfile({ name, email, avatarColor: color });
-    updatePreferences(prefs);
     toast("Settings saved");
   };
 
@@ -82,8 +85,8 @@ export default function SettingsPage() {
         <Card className="px-6 py-3">
           <h2 className="mb-1 mt-3 text-sm font-semibold text-slate-800 dark:text-slate-100">Preferences</h2>
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
-            <Toggle checked={prefs.darkMode} onChange={(v) => setPrefs({ ...prefs, darkMode: v })} label="Dark mode" description="Use a darker color palette across the app." />
-            <Toggle checked={prefs.emailNotifications} onChange={(v) => setPrefs({ ...prefs, emailNotifications: v })} label="Email notifications" description="Receive updates about task activity by email." />
+            <Toggle checked={prefs.darkMode} onChange={(v) => setPref({ darkMode: v })} label="Dark mode" description="Use a darker color palette across the app." />
+            <Toggle checked={prefs.emailNotifications} onChange={(v) => setPref({ emailNotifications: v })} label="Email notifications" description="Receive updates about task activity by email." />
           </div>
         </Card>
         <div className="flex justify-end">

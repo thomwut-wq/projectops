@@ -42,7 +42,7 @@ body {
   }
 }
 .animate-login-in {
-  animation: login-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: login-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes float {
@@ -132,4 +132,8 @@ body {
 }
 .kanban-column--over {
   animation: pulse-glow 1.4s ease-in-out infinite;
+}
+
+.animate-page-in {
+  animation: fade-in 0.5s ease-out both;
 }
