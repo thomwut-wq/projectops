@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FolderKanban, KanbanSquare, Users, Settings, LogOut, Menu, X, Layers } from "lucide-react";
+import { LayoutDashboard, FolderKanban, KanbanSquare, Users, Settings, LogOut, Menu, X, Layers, KeyRound } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Avatar, LoadingScreen } from "./ui";
@@ -14,6 +14,7 @@ const nav = [
   { href: "/tasks", label: "Tasks", icon: KanbanSquare },
   { href: "/team", label: "Team", icon: Users },
   { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/password", label: "Change Password", icon: KeyRound },
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -75,7 +76,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Avatar name={currentUser.name} color={currentUser.avatarColor} />
             <div className="min-w-0">
               <p className="truncate text-sm font-medium text-slate-800 dark:text-slate-100">{currentUser.name}</p>
-              <p className="truncate text-xs text-slate-500">{isAdmin ? "Administrator" : "Team member"}</p>
+              <p className="truncate text-xs text-slate-500">
+                <span className={cn("mr-1 inline-block rounded px-1 py-px text-[10px] font-semibold uppercase", isAdmin ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300" : "bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300")}>
+                  {currentUser.role}
+                </span>
+                {isAdmin ? "Administrator" : "Team member"}
+              </p>
             </div>
           </div>
         </div>

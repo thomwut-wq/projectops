@@ -30,3 +30,106 @@ body {
 .animate-slide-up {
   animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+@keyframes login-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-login-in {
+  animation: login-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+.animate-float {
+  animation: float 7s ease-in-out infinite;
+}
+.animate-float-slow {
+  animation: float 11s ease-in-out infinite;
+}
+
+@keyframes grow-bar {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.animate-grow-bar {
+  transform-origin: bottom;
+  animation: grow-bar 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-stagger-in {
+  animation: stagger-in 0.45s ease-out both;
+}
+
+/* Kanban drag-and-drop */
+.kanban-card {
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease,
+    opacity 0.2s ease;
+}
+.kanban-card--dragging {
+  transform: rotate(4deg) scale(1.05) translateY(-4px) !important;
+  box-shadow: 0 20px 40px -12px rgba(79, 70, 229, 0.45) !important;
+  opacity: 0.95;
+  z-index: 20;
+}
+.kanban-card--dropped {
+  animation: settle 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes settle {
+  from {
+    transform: rotate(4deg) scale(1.05);
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+  }
+}
+.kanban-column--over {
+  box-shadow:
+    0 0 0 2px rgba(99, 102, 241, 0.5),
+    0 0 32px -4px rgba(99, 102, 241, 0.45);
+}
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(99, 102, 241, 0.45),
+      0 0 24px -4px rgba(99, 102, 241, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(99, 102, 241, 0.7),
+      0 0 40px -2px rgba(99, 102, 241, 0.6);
+  }
+}
+.kanban-column--over {
+  animation: pulse-glow 1.4s ease-in-out infinite;
+}

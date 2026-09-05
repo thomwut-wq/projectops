@@ -8,7 +8,7 @@ import { PROJECT_STATUS_LABELS, PROJECT_STATUS_STYLES } from "@/lib/types";
 import { Avatar, Badge, Button, Card, EmptyState, Field, Modal, ProgressBar, inputCls } from "@/components/ui";
 
 export default function ProjectsPage() {
-  const { data, isAdmin, addProject } = useStore();
+  const { data, isAdmin, addProject, visibleProjects } = useStore();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", description: "", startDate: new Date().toISOString().slice(0, 10), endDate: "" });
@@ -26,7 +26,7 @@ export default function ProjectsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Projects</h1>
-          <p className="text-sm text-slate-500">{data.projects.length} projects in your workspace</p>
+          <p className="text-sm text-slate-500">{visibleProjects.length} {isAdmin ? "projects in your workspace" : "projects assigned to you"}</p>
         </div>
         {isAdmin && (
           <Button onClick={() => setOpen(true)}>
@@ -35,11 +35,11 @@ export default function ProjectsPage() {
         )}
       </div>
 
-      {data.projects.length === 0 ? (
-        <EmptyState icon={FolderKanban} title="No projects yet" message="Create your first project to get started." />
+      {visibleProjects.length === 0 ? (
+        <EmptyState icon={FolderKanban} title={isAdmin ? "No projects yet" : "No assigned projects"} message={isAdmin ? "Create your first project to get started." : "You will see projects here once an admin adds you to a team."} />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {data.projects.map((p) => {
+          {visibleProjects.map((p) => {
             const tasks = data.tasks.filter((t) => t.projectId === p.id);
             const done = tasks.filter((t) => t.status === "done").length;
             const pct = tasks.length ? Math.round((done / tasks.length) * 100) : 0;

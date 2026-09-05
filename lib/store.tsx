@@ -26,6 +26,10 @@ interface StoreContextValue {
   login: (username: string, password: string) => boolean;
   logout: () => void;
   canEditTask: (task: Task) => boolean;
+  canViewProject: (project: Project) => boolean;
+  visibleProjects: Project[];
+  changePassword: (currentPassword: string, newPassword: string) => boolean;
+  resetUserPassword: (userId: string, newPassword: string) => boolean;
   addProject: (p: Omit<Project, "id" | "createdBy" | "status" | "memberIds">) => boolean;
   updateProject: (id: string, patch: Partial<Project>) => boolean;
   deleteProject: (id: string) => boolean;
@@ -113,6 +117,53 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     (task: Task) => !!currentUser && (isAdmin || task.createdBy === currentUser.id),
     [currentUser, isAdmin],
   );
+
+  const canViewProject = useCallback(
+    (project: Project) => {
+      if (!currentUser) return false;
+      if (isAdmin) return true;
+      const memberIds = data.members.filter((m) => m.email === currentUser.email).map((m) => m.id);
+      return project.createdBy === currentUser.id || project.memberIds.some((id) => memberIds.includes(id));
+    },
+    [currentUser, isAdmin, data.members],
+  );
+  const visibleProjects = useMemo(() => data.projects.filter(canViewProject), [data.projects, canViewProject]);
+
+  const changePassword: StoreContextValue["changePassword"] = (currentPassword, newPassword) => {
+    if (!currentUser) return false;
+    if (currentUser.password !== currentPassword) {
+      toast("Current password is incorrect", "error");
+      return false;
+    }
+    if (newPassword.length < 6) {
+      toast("New password must be at least 6 characters", "error");
+      return false;
+    }
+    setData((d) => ({
+      ...d,
+      users: d.users.map((u) => (u.id === currentUser.id ? { ...u, password: newPassword } : u)),
+      activity: [log("changed their password"), ...d.activity],
+    }));
+    toast("Password changed successfully");
+    return true;
+  };
+
+  const resetUserPassword: StoreContextValue["resetUserPassword"] = (userId, newPassword) => {
+    if (!isAdmin) return denied();
+    const target = data.users.find((u) => u.id === userId);
+    if (!target) return false;
+    if (newPassword.length < 6) {
+      toast("New password must be at least 6 characters", "error");
+      return false;
+    }
+    setData((d) => ({
+      ...d,
+      users: d.users.map((u) => (u.id === userId ? { ...u, password: newPassword } : u)),
+      activity: [log(`reset the password for ${target.name}`), ...d.activity],
+    }));
+    toast(`Password reset for ${target.name}`);
+    return true;
+  };
 
   const addProject: StoreContextValue["addProject"] = (p) => {
     if (!isAdmin) return denied();
@@ -260,6 +311,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     login,
     logout,
     canEditTask,
+    canViewProject,
+    visibleProjects,
+    changePassword,
+    resetUserPassword,
     addProject,
     updateProject,
     deleteProject,

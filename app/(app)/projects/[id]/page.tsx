@@ -15,17 +15,17 @@ type Tab = "overview" | "tasks" | "team";
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { data, isAdmin, updateProject, deleteProject } = useStore();
+  const { data, isAdmin, updateProject, deleteProject, canViewProject } = useStore();
   const [tab, setTab] = useState<Tab>("overview");
   const project = data.projects.find((p) => p.id === id);
 
-  if (!project) {
+  if (!project || !canViewProject(project)) {
     return (
       <div className="space-y-4">
         <Link href="/projects" className="inline-flex items-center gap-1 text-sm text-indigo-600 hover:underline">
           <ArrowLeft className="h-4 w-4" /> Back to projects
         </Link>
-        <EmptyState icon={Activity} title="Project not found" />
+        <EmptyState icon={Activity} title={project ? "Access restricted" : "Project not found"} message={project ? "You are not assigned to this project." : undefined} />
       </div>
     );
   }

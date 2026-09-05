@@ -13,6 +13,7 @@ export default function Kanban({ projectId }: { projectId?: string }) {
   const [dragId, setDragId] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<TaskStatus | null>(null);
   const [flashId, setFlashId] = useState<string | null>(null);
+  const [droppedId, setDroppedId] = useState<string | null>(null);
   const [modal, setModal] = useState<{ task?: Task; status?: TaskStatus } | null>(null);
   const touchGhost = useRef<HTMLElement | null>(null);
 
@@ -24,7 +25,9 @@ export default function Kanban({ projectId }: { projectId?: string }) {
     const ok = moveTask(taskId, status);
     if (ok) {
       setFlashId(taskId);
+      setDroppedId(taskId);
       setTimeout(() => setFlashId(null), 300);
+      setTimeout(() => setDroppedId(null), 400);
     }
   };
 
@@ -36,9 +39,16 @@ export default function Kanban({ projectId }: { projectId?: string }) {
     }
     e.dataTransfer.setData("text/plain", task.id);
     e.dataTransfer.effectAllowed = "move";
-    setDragId(task.id);
+    const el = e.currentTarget as HTMLElement;
+    el.classList.add("kanban-card--dragging");
+    e.dataTransfer.setDragImage(el, e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    requestAnimationFrame(() => {
+      el.classList.remove("kanban-card--dragging");
+      setDragId(task.id);
+    });
   };
-  const onDragEnd = () => {
+  const onDragEnd = (e: React.DragEvent) => {
+    (e.currentTarget as HTMLElement).classList.remove("kanban-card--dragging");
     setDragId(null);
     setOverCol(null);
   };
@@ -55,7 +65,8 @@ export default function Kanban({ projectId }: { projectId?: string }) {
       ghost.style.pointerEvents = "none";
       ghost.style.opacity = "0.9";
       ghost.style.zIndex = "1000";
-      ghost.style.transform = "translateY(-2px) rotate(2deg)";
+      ghost.style.transform = "translateY(-4px) rotate(4deg) scale(1.05)";
+      ghost.style.boxShadow = "0 20px 40px -12px rgba(79, 70, 229, 0.45)";
       document.body.appendChild(ghost);
       touchGhost.current = ghost;
     }, 250);
@@ -111,9 +122,9 @@ export default function Kanban({ projectId }: { projectId?: string }) {
                 setDragId(null);
               }}
               className={cn(
-                "flex min-h-[300px] flex-col rounded-xl border p-3 transition-colors duration-200",
+                "flex min-h-[300px] flex-col rounded-xl border p-3 transition-all duration-200",
                 overCol === status && dragId
-                  ? "border-indigo-300 bg-indigo-50 dark:border-indigo-700 dark:bg-indigo-950/40"
+                  ? "kanban-column--over border-indigo-400 bg-indigo-50 dark:border-indigo-600 dark:bg-indigo-950/40"
                   : "border-slate-200 bg-slate-50/60 dark:border-slate-800 dark:bg-slate-900/60",
               )}
             >
@@ -154,10 +165,13 @@ export default function Kanban({ projectId }: { projectId?: string }) {
                       onTouchEnd={(e) => onTouchEnd(e, task)}
                       onClick={() => setModal({ task })}
                       className={cn(
-                        "group select-none rounded-lg border bg-white p-3 shadow-sm transition-all duration-200 dark:bg-slate-800",
+                        "kanban-card group select-none rounded-lg border p-3 dark:bg-slate-800",
                         editable ? "cursor-grab active:cursor-grabbing" : "cursor-pointer",
-                        dragId === task.id ? "-translate-y-0.5 opacity-60 shadow-lg ring-2 ring-indigo-300" : "hover:-translate-y-0.5 hover:shadow-md",
-                        flashId === task.id ? "border-emerald-500 ring-2 ring-emerald-300" : "border-slate-200 dark:border-slate-700",
+                        dragId === task.id
+                          ? "border-2 border-dashed border-indigo-400 bg-indigo-50/40 shadow-none dark:border-indigo-500 dark:bg-indigo-950/30 [&>*]:opacity-0"
+                          : "bg-white shadow-sm hover:-translate-y-0.5 hover:shadow-md",
+                        droppedId === task.id && "kanban-card--dropped",
+                        flashId === task.id ? "border-emerald-500 ring-2 ring-emerald-300" : dragId !== task.id && "border-slate-200 dark:border-slate-700",
                       )}
                     >
                       <div className="mb-2 flex items-start justify-between gap-2">
